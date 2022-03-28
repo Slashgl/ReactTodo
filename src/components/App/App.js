@@ -82,10 +82,10 @@ export default class App extends React.Component{
     };
 
     onFilterAll = () => {
-        const allActive = this.state.todoData.filter(el => el)
+        const allAll = this.state.todoData.filter(el => el)
         this.setState(( { todoData }) => {
             return {
-                todoData: allActive
+                todoData: allAll
             }
         })
     }
@@ -98,10 +98,18 @@ export default class App extends React.Component{
         })
     }
     onFilterCompleted = () => {
-        const allActive = this.state.todoData.filter(el => el.done)
+        const allCompleted = this.state.todoData.filter(el => el.done)
         this.setState(( { todoData }) => {
             return {
-                todoData: allActive
+                todoData: allCompleted
+            }
+        })
+    }
+    removeCompleteTask = () => {
+        const removeCompleteTask =  this.state.todoData.filter(el => !el.done)
+        this.setState(({ todoData }) => {
+            return{
+                todoData: removeCompleteTask
             }
         })
     }
@@ -124,7 +132,7 @@ export default class App extends React.Component{
                         onFilterActive={this.onFilterActive}
                         onFilterAll={this.onFilterAll}
                         onFilterCompleted={this.onFilterCompleted}
-                        removeCompleteTask={this.onFilterCompleted}/>
+                        removeCompleteTask={this.removeCompleteTask}/>
             </div>
         )
     }
