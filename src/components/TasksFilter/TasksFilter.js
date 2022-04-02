@@ -1,30 +1,48 @@
-import React from "react";
 
-import './TasksFilter.css';
-import PropTypes from "prop-types";
+import React from 'react';
+import '../TasksFilter/TasksFilter.css'
+import PropTypes from 'prop-types';
 
-const TasksFilter = ( { onFilterAll ,onFilterActive, onFilterCompleted } ) => {
-    return (
-        <ul className="filters">
-            <li>
-                <button className='all targetFilter selected'
-                        onClick={onFilterAll}>All</button>
-            </li>
-            <li>
-                <button className='active targetFilter'
-                        onClick={onFilterActive}>Active</button>
-            </li>
-            <li>
-                <button className='completed targetFilter'
-                        onClick={onFilterCompleted}>Completed</button>
-            </li>
-        </ul>
-    )
+export default class TasksFilter extends React.Component {
+    onSetFilter = (ev) => {
+        const { setFilter } = this.props;
+        const list = document.querySelectorAll('.filters li button');
+        list.forEach((el) => {
+            el.classList.remove('selected');
+        });
+        ev.target.className = 'selected';
+        setFilter(ev.target.innerText);
+    };
+
+    render() {
+        return (
+            <ul className="filters">
+                <li>
+                    <button type="button" onClick={this.onSetFilter}>
+                        All
+                    </button>
+                </li>
+                <li>
+                    <button type="button" onClick={this.onSetFilter}>
+                        Active
+                    </button>
+                </li>
+                <li>
+                    <button type="button" onClick={this.onSetFilter}>
+                        Completed
+                    </button>
+                </li>
+            </ul>
+        );
+    }
 }
+
+TasksFilter.defaultProps = {
+    setFilter: () => {},
+};
 
 TasksFilter.propTypes = {
-    onFilterAll: PropTypes.func.isRequired,
-    onFilterActive: PropTypes.func.isRequired,
-    onFilterCompleted: PropTypes.func.isRequired
-}
-export default TasksFilter;
+    setFilter: PropTypes.func,
+};
+
+

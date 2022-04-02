@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import Clock from "../Clock/Clock";
 import './Task.css';
 import PropTypes from "prop-types";
+import {formatDistanceToNow} from "date-fns";
 
 export default class Task extends Component {
     static propTypes = {
@@ -31,11 +31,16 @@ export default class Task extends Component {
             this.handleChange(event);
         }
     };
+    timeCreateItem(time = Task.defaultProps.date) {
+        return formatDistanceToNow(new Date(time), {
+            addSuffix: true,
+        });
+    }
     render() {
 
         const { onToggleDone, onDeleted,onToggleEdit, item} = this.props
 
-        const {label, done, editing} = item
+        const {label, done, editing, createdDate, visibility} = item
         let className = '';
         if(done) {
             className += ' completed'
@@ -43,8 +48,10 @@ export default class Task extends Component {
         if (editing) {
             className += ' editing';
         }
+        let visibleClass = {};
+        if (item.visibility === false) visibleClass = { display: 'none' };
         return (
-            <li className={className}>
+            <li style={visibleClass} className={className}>
                 <div className='view'>
                     <input
                         className='toggle'
@@ -52,7 +59,7 @@ export default class Task extends Component {
                         onChange={onToggleDone}/>
                     <label>
                     <span className='description'>{label}</span>
-                        <Clock todos={item}/>
+                        <span className="created">{this.timeCreateItem(createdDate)}</span>
                     </label>
                     <button className="icon icon-edit" type="button" aria-label="Icon input edit" onClick={onToggleEdit} />
                     <button className="icon icon-destroy" type="button" aria-label="Icon input deleted" onClick={onDeleted} />
@@ -60,6 +67,7 @@ export default class Task extends Component {
                 <input
                     type="text"
                     className="edit"
+                    defaultValue={label}
                     onBlur={this.handleChange}
                     onKeyUp={this.handleChangeKey}
                 />

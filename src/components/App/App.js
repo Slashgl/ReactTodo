@@ -11,7 +11,7 @@ export default class App extends React.Component {
             this.createItemState('Complete task'),
             this.createItemState('Editing task'),
             this.createItemState('Active task'),
-        ]
+        ],
     }
     onToggleEdit = (id) => {
         this.setState(({todoData}) => ({
@@ -48,6 +48,7 @@ export default class App extends React.Component {
             important: false,
             id: this.maxId++,
             editing: false,
+            visibility: true,
             createdDate: new Date(),
         }
 
@@ -66,6 +67,7 @@ export default class App extends React.Component {
             done: false,
             id: this.maxId++,
             editing: false,
+            visibility: true,
             createdDate: new Date(),
         }
     }
@@ -82,39 +84,41 @@ export default class App extends React.Component {
         newArr[ind][propertyName] = !newArr[ind][propertyName];
         return newArr;
     };
-
-    onFilterAll = () => {
-        const allAll = this.state.todoData.filter(el => el)
-        this.setState(({todoData}) => {
-            return {
-                todoData: allAll
-            }
-        })
-    }
-    onFilterActive = () => {
-        const allActive = this.state.todoData.filter(el => !el.done)
-        this.setState(({todoData}) => {
-            return {
-                todoData: allActive
-            }
-        })
-    }
-    onFilterCompleted = () => {
-        const allCompleted = this.state.todoData.filter(el => el.done)
-        this.setState(({todoData}) => {
-            return {
-                todoData: allCompleted
-            }
-        })
-    }
     removeCompleteTask = () => {
         const removeCompleteTask = this.state.todoData.filter(el => !el.done)
-        this.setState(({todoData}) => {
+        this.setState(() => {
             return {
                 todoData: removeCompleteTask
             }
         })
     }
+    setFilter = (filter) => {
+        const newArr = [...this.state.todoData];
+
+        newArr.map((item) => {
+            const newItem = item;
+            newItem.visibility = true;
+            return newItem;
+        });
+
+        if (filter === 'Active') {
+            newArr.map((item) => {
+                const newItem = item;
+                if (item.done === true) newItem.visibility = false;
+                return newItem;
+            });
+        }
+        if (filter === 'Completed') {
+            newArr.map((item) => {
+                const newItem = item;
+                if (item.done !== true) newItem.visibility = false;
+                return newItem;
+            });
+        }
+        this.setState(() => ({
+            todoData: newArr,
+        }));
+    };
 
     render() {
         const countItems = this.state.todoData.filter(el => el.done).length
@@ -132,10 +136,9 @@ export default class App extends React.Component {
                 />
                 <Footer itemsLeft={countItemsLeft}
                         todos={this.state.todoData}
-                        onFilterActive={this.onFilterActive}
-                        onFilterAll={this.onFilterAll}
-                        onFilterCompleted={this.onFilterCompleted}
-                        removeCompleteTask={this.removeCompleteTask}/>
+                        removeCompleteTask={this.removeCompleteTask}
+                        setFilter={this.setFilter}
+                        />
             </div>
         )
     }
