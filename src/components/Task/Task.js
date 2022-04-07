@@ -1,46 +1,43 @@
-import React, {Component} from "react";
+import React from "react";
 import './Task.css';
-import PropTypes from "prop-types";
 import {formatDistanceToNow} from "date-fns";
 
-export default class Task extends Component {
-    static propTypes = {
-        item: PropTypes.shape({
-            label: PropTypes.string,
-            done: PropTypes.bool,
-            editing: PropTypes.bool,
-            id: PropTypes.number,
-        }).isRequired,
-        onDeleted: PropTypes.func.isRequired,
-        onToggleEdit: PropTypes.func.isRequired,
-        addEditedItem: PropTypes.func.isRequired,
-        onToggleDone: PropTypes.func.isRequired,
-    };
+const Task = ({onToggleDone, onDeleted,onToggleEdit, item, addEditedItem}) =>  {
 
+    const [ seconds, setSeconds ] = React.useState(0);
+    const [ minutes, setMinutes ] = React.useState(0)
+    const [ timerActive, setTimerActive ] = React.useState(false);
 
-    handleChange = (event) => {
-        const { item, addEditedItem } = this.props;
+    const {label, done, editing, createdDate} = item
+
+    React.useEffect(() => {
+        if (seconds >= 0 && seconds < 60 && timerActive) {
+            setTimeout(setSeconds, 1000, seconds + 1);
+        }else if(seconds >= 60) {
+            setMinutes(minutes + 1)
+            setSeconds(0)
+        }else {
+            setTimerActive(false)
+        }
+
+    }, [ seconds, timerActive ]);
+
+    const handleChange = (event) => {
         const newItem = { ...item };
         newItem.label = event.target.value;
         newItem.editing = false;
         addEditedItem(item.id, newItem)
     };
 
-    handleChangeKey = (event) => {
+    const handleChangeKey = (event) => {
         if (event.key === 'Enter') {
-            this.handleChange(event);
+            handleChange(event);
         }
     };
-    timeCreateItem(time = Task.defaultProps.date) {
-        return formatDistanceToNow(new Date(time), {
-            addSuffix: true,
-        });
+    const timeCreateItem = (time = Task.defaultProps.date) => {
+        return formatDistanceToNow(new Date(time));
     }
-    render() {
 
-        const { onToggleDone, onDeleted,onToggleEdit, item} = this.props
-
-        const {label, done, editing, createdDate, visibility} = item
         let className = '';
         if(done) {
             className += ' completed'
@@ -56,10 +53,16 @@ export default class Task extends Component {
                     <input
                         className='toggle'
                         type='checkbox'
-                        onChange={onToggleDone}/>
+                        onChange={onToggleDone}
+                    />
                     <label>
-                    <span className='description'>{label}</span>
-                        <span className="created">{this.timeCreateItem(createdDate)}</span>
+                        <span className="title">
+                          <button className="icon icon-play" onClick={() => setTimerActive(true)}> </button>
+                          <button className="icon icon-pause" onClick={() => setTimerActive(false)}> </button>
+                            {`${seconds}:${minutes < 10 ? `0${minutes}` : minutes}`}
+                        </span>
+                    <span className='title'>{label}</span>
+                        <span className="created">{timeCreateItem(createdDate)}</span>
                     </label>
                     <button className="icon icon-edit" type="button" aria-label="Icon input edit" onClick={onToggleEdit} />
                     <button className="icon icon-destroy" type="button" aria-label="Icon input deleted" onClick={onDeleted} />
@@ -68,47 +71,11 @@ export default class Task extends Component {
                     type="text"
                     className="edit"
                     defaultValue={label}
-                    onBlur={this.handleChange}
-                    onKeyUp={this.handleChangeKey}
+                    onBlur={handleChange}
+                    onKeyUp={handleChangeKey}
                 />
             </li>
         )
-    }
 }
 
-
-// <li className='completed'>
-//     <div className='view'>
-//         <input className='toggle' type='checkbox'/>
-//         <label>
-//             <span className='description'>Completed task</span>
-//             <span className='created'>created 17 seconds ago</span>
-//         </label>
-//         <button className="icon icon-edit" />
-//         <button className="icon icon-destroy" />
-//     </div>
-// </li>
-// <li className='editing'>
-//     <div className='view'>
-//         <input className='toggle' type='checkbox'/>
-//         <label>
-//             <span className='description'>Completed task</span>
-//             <span className='created'>created 17 seconds ago</span>
-//         </label>
-//         <button className="icon icon-edit" />
-//         <button className="icon icon-destroy" />
-//     </div>
-//     <input type="text" className="edit" defaultValue='Editing task' />
-// </li>
-//
-// <li>
-//     <div className="view">
-//         <input className="toggle" type="checkbox" />
-//         <label>
-//             <span className="description">Active task</span>
-//             <span className="created">created 5 minutes ago</span>
-//         </label>
-//         <button className="icon icon-edit" />
-//         <button className="icon icon-destroy" />
-//     </div>
-// </li>
+export default Task
