@@ -4,7 +4,7 @@ import Task from "../Task/Task";
 import './TaskList.css'
 import PropTypes from "prop-types";
 
-const TaskList = ( { todos, onDeleted, onToggleDone, onToggleEdit, addEditedItem} ) => {
+const TaskList = ( { todos, onDeleted, onToggleDone, onToggleEdit, addEditedItem, timer} ) => {
 
     const elements = todos.map(item => {
         const {id, ...props} = item
@@ -19,6 +19,7 @@ const TaskList = ( { todos, onDeleted, onToggleDone, onToggleEdit, addEditedItem
                     todos={todos}
                     onToggleEdit={() => onToggleEdit(id)}
                     addEditedItem={addEditedItem}
+                    timer={timer}
                 />
             </React.Fragment>
         )

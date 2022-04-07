@@ -50,6 +50,7 @@ export default class App extends React.Component {
             editing: false,
             visibility: true,
             createdDate: new Date(),
+            timer: new Date()
         }
 
         this.setState(({todoData}) => {
@@ -69,6 +70,7 @@ export default class App extends React.Component {
             editing: false,
             visibility: true,
             createdDate: new Date(),
+            timer: new Date(),
         }
     }
 
@@ -133,6 +135,7 @@ export default class App extends React.Component {
                     onToggleDone={this.onToggleDone}
                     onToggleEdit={this.onToggleEdit}
                     addEditedItem={this.addEditedItem}
+                    timer={this.state.todoData.timer}
                 />
                 <Footer itemsLeft={countItemsLeft}
                         todos={this.state.todoData}
