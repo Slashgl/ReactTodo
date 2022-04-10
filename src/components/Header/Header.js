@@ -12,10 +12,9 @@ export default class Header extends React.Component{
         }
         const onSubmitForm = (e) => {
             e.preventDefault()
-            this.props.onItemAdd(this.state.label)
-            this.setState({
-                label: ''
-            })
+            if(this.state.label !== '') {
+                this.props.onItemAdd(this.state.label)
+            }
         }
 
         return (

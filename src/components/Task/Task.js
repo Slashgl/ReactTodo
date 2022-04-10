@@ -35,12 +35,13 @@ export default class Task extends Component {
         return formatDistanceToNow(new Date(time), {
             addSuffix: true,
         });
+
     }
     render() {
 
         const { onToggleDone, onDeleted,onToggleEdit, item} = this.props
 
-        const {label, done, editing, createdDate, visibility} = item
+        const {label, done, editing, createdDate} = item
         let className = '';
         if(done) {
             className += ' completed'
@@ -48,10 +49,9 @@ export default class Task extends Component {
         if (editing) {
             className += ' editing';
         }
-        let visibleClass = {};
-        if (item.visibility === false) visibleClass = { display: 'none' };
+
         return (
-            <li style={visibleClass} className={className}>
+            <li className={className}>
                 <div className='view'>
                     <input
                         className='toggle'

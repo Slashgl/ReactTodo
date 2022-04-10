@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../Header/Header";
+import Header from "../Header";
 import './App.css';
-import TaskList from "../TaskList/TaskList";
-import Footer from "../Footer/footer";
+import TaskList from "../TaskList";
+import Footer from "../Footer";
 
 export default class App extends React.Component {
     maxId = 100;
@@ -12,6 +12,7 @@ export default class App extends React.Component {
             this.createItemState('Editing task'),
             this.createItemState('Active task'),
         ],
+        filter: 'all',
     }
     onToggleEdit = (id) => {
         this.setState(({todoData}) => ({
@@ -45,7 +46,7 @@ export default class App extends React.Component {
     onItemAdd = (text) => {
         const newItem = {
             label: text,
-            important: false,
+            done: false,
             id: this.maxId++,
             editing: false,
             visibility: true,
@@ -92,52 +93,42 @@ export default class App extends React.Component {
             }
         })
     }
-    setFilter = (filter) => {
-        const newArr = [...this.state.todoData];
-
-        newArr.map((item) => {
-            const newItem = item;
-            newItem.visibility = true;
-            return newItem;
-        });
-
-        if (filter === 'Active') {
-            newArr.map((item) => {
-                const newItem = item;
-                if (item.done === true) newItem.visibility = false;
-                return newItem;
-            });
+    filter = (items, filter) => {
+        switch (filter) {
+            case 'all':
+                return items;
+            case 'active':
+                return items.filter(item => !item.done);
+            case 'completed':
+                return items.filter(item => item.done);
+            default:
+                return items;
         }
-        if (filter === 'Completed') {
-            newArr.map((item) => {
-                const newItem = item;
-                if (item.done !== true) newItem.visibility = false;
-                return newItem;
-            });
-        }
-        this.setState(() => ({
-            todoData: newArr,
-        }));
-    };
+    }
+    onFilterChange = ( filter ) => {
+        this.setState({filter})
+    }
 
     render() {
+        const visibleItems = this.filter(this.state.todoData, this.state.filter)
         const countItems = this.state.todoData.filter(el => el.done).length
         const countItemsLeft = this.state.todoData.length - countItems
         return (
             <div className='todoapp'>
-                <Header todos={this.state.todoData}
+                <Header
                         onItemAdd={this.onItemAdd}/>
                 <TaskList
-                    todos={this.state.todoData}
+                    todos={visibleItems}
                     onDeleted={(id) => this.DeletedTask(id)}
                     onToggleDone={this.onToggleDone}
                     onToggleEdit={this.onToggleEdit}
                     addEditedItem={this.addEditedItem}
+                    filter={this.filter}
                 />
                 <Footer itemsLeft={countItemsLeft}
-                        todos={this.state.todoData}
                         removeCompleteTask={this.removeCompleteTask}
-                        setFilter={this.setFilter}
+                        filter={this.filter}
+                        onFilterChange={this.onFilterChange}
                         />
             </div>
         )
