@@ -1,43 +1,30 @@
-import React from "react";
+import React, {useContext} from "react";
+import {Context} from "../Context/Context";
+import './TaskList.css'
 import Task from "../Task";
 
-import './TaskList.css'
-import PropTypes from "prop-types";
 
-const TaskList = ( { todos, onDeleted, onToggleDone, onToggleEdit, addEditedItem} ) => {
+const TaskList = () => {
+    const {visibleItems} = useContext(Context)
+    const elements = visibleItems.map(item => {
+        const {...props} = item
 
-    const elements = todos.map(item => {
-        const {id, ...props} = item
-
-        return (
-            <React.Fragment key={id}>
+        return(
+            <React.Fragment key={item.id}>
                 <Task
                     {...props}
                     item={item}
-                    onDeleted={() => onDeleted(id)}
-                    onToggleDone={() => onToggleDone(id)}
-                    todos={todos}
-                    onToggleEdit={() => onToggleEdit(id)}
-                    addEditedItem={addEditedItem}
                 />
             </React.Fragment>
         )
     })
-
     return(
         <div className='main'>
             <ul className='todo-list'>
-                { elements }
+                {elements}
             </ul>
         </div>
     )
 
 }
-TaskList.propTypes = {
-    todos: PropTypes.arrayOf(PropTypes.object).isRequired,
-    onDeleted: PropTypes.func.isRequired,
-    onToggleDone: PropTypes.func.isRequired,
-    onToggleEdit: PropTypes.func.isRequired,
-    addEditedItem: PropTypes.func.isRequired,
-};
 export default TaskList

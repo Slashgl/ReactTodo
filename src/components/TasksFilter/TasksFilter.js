@@ -1,34 +1,35 @@
-import React from 'react';
-import '../TasksFilter/TasksFilter.css'
+import React, {useContext} from "react";
+import './TasksFilter.css'
+import {Context} from "../Context/Context";
 
 
-export default class TasksFilter extends React.Component {
-    buttons = [
+const TasksFilter = () => {
+    const buttons = [
         {name: 'all', label: 'All'},
         {name: 'active', label: 'Active'},
         {name: 'completed', label: 'Completed'}
     ]
+    const {onFilterChange, filter} = useContext(Context)
 
-    render() {
-        const { onFilterChange } = this.props
-        const buttons = this.buttons.map(({ name, label }) => {
-
-            return (
-                <li key={name}>
-                    <button type="button"
-                            onClick={() => onFilterChange(name)}>
-                        {label}
-                    </button>
-                </li>
-            )
-        })
-        return (
-            <ul className="filters">
-                {buttons}
-            </ul>
-        );
-    }
+    const butons = buttons.map(({name, label}) => {
+        const isActive = filter === name;
+        console.log(isActive)
+        const clazz = isActive ? 'selected' : null
+        return(
+            <li key={name}
+                >
+                <button type='button'
+                        className={clazz}
+                        onClick={() => onFilterChange(name)}
+                >{label}</button>
+            </li>
+        )
+    })
+    return (
+        <ul className="filters">
+            {butons}
+        </ul>
+    )
 }
-
-
+export default TasksFilter
 

@@ -1,34 +1,39 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import './Header.css'
-export default class Header extends React.Component{
-    state = {
-        label: '',
-    }
-    render() {
-        const onLabelChange = (e) => {
-            this.setState({
-                label: e.target.value
-            })
-        }
-        const onSubmitForm = (e) => {
-            e.preventDefault()
-            if(this.state.label !== '') {
-                this.props.onItemAdd(this.state.label)
-            }
-        }
+import {Context} from "../Context/Context";
 
-        return (
-            <div>
-                <h1>todos</h1>
-                <form onSubmit={onSubmitForm}>
-                    <input
-                        className='new-todo'
-                        placeholder="What needs to be done?"
-                        onChange={onLabelChange}
-                        value={this.state.label}
-                    />
-                </form>
-            </div>
-        )
+
+const Header = () =>{
+    const {visibleItems, setState} = useContext(Context)
+    const [label, setLabel] = useState('')
+    let id = 100
+    function saveTodo(e) {
+        e.preventDefault()
+        if(label !== '') {
+            setState([...visibleItems, {
+                label: label,
+                id: id++,
+                done: false,
+                editing: false,
+                timer: new Date()
+            }])
+        }
     }
+
+
+
+    return (
+        <div>
+            <h1>todos</h1>
+            <form onSubmit={saveTodo}>
+                <input
+                    className='new-todo'
+                    placeholder="What needs to be done?"
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                />
+            </form>
+        </div>
+    )
 }
+export default Header
